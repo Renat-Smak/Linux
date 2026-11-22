@@ -14,7 +14,7 @@ docker inspect --format='{{.Id}}' "$image" > lab6_docker_hash.txt
 docker run -d -p 127.0.0.1:8080:8080 --name "$container" "$image"
 trap 'docker rm -f "$container" >/dev/null 2>&1 || true' EXIT
 echo '$ curl http://localhost:8080'
-curl --fail --silent --show-error --retry 8 --retry-connrefused --retry-delay 1 \
+curl --fail --silent --show-error --retry 8 --retry-all-errors --retry-delay 1 \
   -w 'HTTP %{http_code}\n' http://127.0.0.1:8080/
 docker stop "$container"
 docker rm "$container"

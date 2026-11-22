@@ -46,3 +46,23 @@ jobs:
           path: |
             lab6_docker_hash.txt
             lab6_final_hash.txt
+
+  ansible-lint:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install Ansible and run lint
+        run: |
+          python3 -m venv "$RUNNER_TEMP/ansible"
+          source "$RUNNER_TEMP/ansible/bin/activate"
+          python -m pip install ansible-lint
+          ansible-lint ansible_iac/setup_env.yml
+      - name: Apply playbook twice and test Nginx
+        run: |
+          source "$RUNNER_TEMP/ansible/bin/activate"
+          bash scripts/lab7-verify.sh
+      - uses: actions/upload-artifact@v4
+        with:
+          name: lab7-blueprint
+          path: lab7_ansible_hash.txt

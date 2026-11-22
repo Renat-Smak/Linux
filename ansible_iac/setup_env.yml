@@ -1,0 +1,24 @@
+---
+- name: Настроить локальный веб-сервер
+  hosts: local
+  become: true
+  gather_facts: false
+  tasks:
+    - name: Установить Nginx
+      ansible.builtin.apt:
+        name: nginx
+        state: present
+        cache_valid_time: 3600
+
+    - name: Разместить веб-страницу
+      ansible.builtin.copy:
+        dest: /var/www/html/index.html
+        content: |
+          <h1>Инфраструктура настроена через Ansible (IaC)</h1>
+        mode: "0644"
+
+    - name: Запустить и включить службу Nginx
+      ansible.builtin.service:
+        name: nginx
+        state: started
+        enabled: true

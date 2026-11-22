@@ -84,3 +84,15 @@ jobs:
           path: |
             lab8_monitoring_status.txt
             screenshots/
+
+  kubernetes:
+    runs-on: ubuntu-latest
+    timeout-minutes: 13
+    steps:
+      - uses: actions/checkout@v4
+      - name: Deploy, scale, update and roll back
+        run: bash scripts/lab9-verify.sh
+      - uses: actions/upload-artifact@v4
+        with:
+          name: lab9-blueprint
+          path: lab9_k8s_status.txt

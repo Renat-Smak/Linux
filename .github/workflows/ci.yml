@@ -1,0 +1,31 @@
+name: Bash Script CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  lint-and-test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: ShellCheck
+        run: shellcheck app_calculator.sh
+      - name: Unit tests and Blueprint
+        run: |
+          output=$(bash app_calculator.sh 5 10)
+          printf 'Ожидается: Сумма: 15\nПолучено: %s\n' "$output"
+          test "$output" = 'Сумма: 15'
+          test "$(bash app_calculator.sh -2 5)" = 'Сумма: 3'
+          if bash app_calculator.sh 7; then exit 1; fi
+          if bash app_calculator.sh abc 1; then exit 1; fi
+          echo 'Все тесты пройдены'
+          git log --oneline | sha256sum | awk '{print $1}' > lab5_hash.txt
+          cat lab5_hash.txt

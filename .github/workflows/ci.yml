@@ -1,4 +1,4 @@
-name: Bash Script CI
+name: CI and Docker Build
 
 on:
   push:
@@ -29,3 +29,20 @@ jobs:
           echo 'Все тесты пройдены'
           git log --oneline | sha256sum | awk '{print $1}' > lab5_hash.txt
           cat lab5_hash.txt
+
+  docker-build:
+    needs: lint-and-test
+    runs-on: ubuntu-latest
+    timeout-minutes: 9
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Build image and verify HTTP
+        run: bash scripts/lab6-verify.sh
+      - uses: actions/upload-artifact@v4
+        with:
+          name: lab6-blueprint
+          path: |
+            lab6_docker_hash.txt
+            lab6_final_hash.txt
